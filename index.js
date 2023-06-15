@@ -38,6 +38,7 @@ async function run() {
         const usersCollection = client.db('summerschool').collection('users')
 
 
+        // save user
         app.put('/users/:email', async (req, res) => {
             const email = req.params.email
             const user = req.body
@@ -47,7 +48,15 @@ async function run() {
                 $set: user,
             }
             const result = await usersCollection.updateOne(query, updateDoc, options)
-            console.log(result)
+            res.send(result)
+        })
+
+
+        // Get user
+        app.get('/users/:email', async (req, res) => {
+            const email = req.params.email
+            const query = { email: email }
+            const result = await usersCollection.findOne(query)
             res.send(result)
         })
 
