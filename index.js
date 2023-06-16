@@ -37,6 +37,7 @@ async function run() {
     try {
         const usersCollection = client.db('summerschool').collection('users')
         const classCollection = client.db('summerschool').collection('classes')
+        const selectClassCollection = client.db('summerschool').collection('selectClasses')
 
 
         // save user
@@ -95,6 +96,18 @@ async function run() {
             res.send(result)
         })
 
+
+        // Save select class
+        app.post('/saveClass', async (req, res) => {
+            const selectClasses = req.body
+            console.log(selectClasses)
+            const result = await selectClassCollection.insertOne(selectClasses)
+            console.log(result)
+            res.send(result)
+        })
+
+
+        
 
 
 
