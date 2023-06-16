@@ -69,12 +69,19 @@ async function run() {
         })
 
 
+        // Get all class
+        app.get('/classes', async (req, res) => {
+            const result = await classCollection.find().toArray()
+            res.send(result)
+        })
+
 
         // Save a class in database
         app.post('/classes', async (req, res) => {
             const classes = req.body
             console.log(classes)
             const result = await classCollection.insertOne(classes)
+            console.log(result)
             res.send(result)
         })
 
