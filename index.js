@@ -97,6 +97,16 @@ async function run() {
         })
 
 
+
+        // Get all select class
+        app.get('/saveClass/:email', async (req, res) => {
+            const email = req.params.email
+            const query = { selectStudent: email }
+            const result = await selectClassCollection.find(query).toArray()
+            res.send(result)
+        })
+
+
         // Save select class
         app.post('/saveClass', async (req, res) => {
             const selectClasses = req.body
@@ -105,9 +115,6 @@ async function run() {
             console.log(result)
             res.send(result)
         })
-
-
-        
 
 
 
