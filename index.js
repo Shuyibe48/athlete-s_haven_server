@@ -36,6 +36,7 @@ const client = new MongoClient(uri, {
 async function run() {
     try {
         const usersCollection = client.db('summerschool').collection('users')
+        const classCollection = client.db('summerschool').collection('classes')
 
 
         // save user
@@ -55,6 +56,25 @@ async function run() {
         // Get user
         app.get('/users', async (req, res) => {
             const result = await usersCollection.find().toArray()
+            res.send(result)
+        })
+
+
+        // Get a single user
+        app.get('/users/:email', async (req, res) => {
+            const email = req.params.email
+            const query = { email: email }
+            const result = await usersCollection.findOne(query)
+            res.send(result)
+        })
+
+
+
+        // Save a class in database
+        app.post('/classes', async (req, res) => {
+            const classes = req.body
+            console.log(classes)
+            const result = await classCollection.insertOne(classes)
             res.send(result)
         })
 
