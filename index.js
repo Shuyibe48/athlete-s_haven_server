@@ -86,6 +86,17 @@ async function run() {
         })
 
 
+        // Get user classes
+        app.get('/classes/:email', async (req, res) => {
+            const email = req.params.email
+            const query = { email: email }
+            const result = await classCollection.find(query).toArray()
+            // console.log(result)
+            res.send(result)
+        })
+
+
+
 
 
 
