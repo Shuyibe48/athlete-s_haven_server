@@ -117,6 +117,14 @@ async function run() {
         })
 
 
+        // delete room
+        app.delete('/saveClass/:id', async (req, res) => {
+            const id = req.params.id
+            const query = { _id: new ObjectId(id) }
+            const result = await selectClassCollection.deleteOne(query)
+            res.send(result)
+        })
+
 
 
 
