@@ -102,16 +102,24 @@ async function run() {
         })
 
 
-        // update class status
+        // update class
         app.put('/classes/:id', async (req, res) => {
             const id = req.params.id
             const status = req.body
             const feedback = req.body
+            const className = req.body
+            const availableSeats = req.body
+            const price = req.body
+            const image = req.body
             const query = { _id: new ObjectId(id) }
             const options = { upsert: true }
             const updateDoc = {
                 $set: status,
                 $set: feedback,
+                $set: className,
+                $set: availableSeats,
+                $set: price,
+                $set: image,
             }
             const result = await classCollection.updateOne(query, updateDoc, options)
             res.send(result)
