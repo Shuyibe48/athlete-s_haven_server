@@ -5,6 +5,7 @@ require('dotenv').config()
 const morgan = require('morgan')
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb')
 const port = process.env.PORT || 5000
+// const stripe = require("stripe")(process.env.PAYMENT_SECRET_KEY)
 
 
 // middleware
@@ -38,6 +39,21 @@ async function run() {
         const usersCollection = client.db('summerschool').collection('users')
         const classCollection = client.db('summerschool').collection('classes')
         const selectClassCollection = client.db('summerschool').collection('selectClasses')
+
+
+        // // generate client secret
+        // app.post('/create-payment-intent', async (req, res) => {
+        //     const price = req.body
+        //     if(price){
+        //         const amount = parseFloat(price) * 100
+        //         const paymentIntent = await stripe.paymentIntents.create({
+        //             amount: amount,
+        //             currency: 'usd',
+        //             payment_method_types: ['card']
+        //         })
+        //         res.send({clientSecret: paymentIntent.client_secret})
+        //     }
+        // })
 
 
         // save user
@@ -76,13 +92,26 @@ async function run() {
             res.send(result)
         })
 
-
         // Save a class in database
         app.post('/classes', async (req, res) => {
             const classes = req.body
             console.log(classes)
             const result = await classCollection.insertOne(classes)
             console.log(result)
+            res.send(result)
+        })
+
+
+        // update class status
+        app.put('/classes/:id', async (req, res) => {
+            const id = req.params.id
+            const status = req.body
+            const query = { _id: new ObjectId(id) }
+            const options = { upsert: true }
+            const updateDoc = {
+                $set: status,
+            }
+            const result = await classCollection.updateOne(query, updateDoc, options)
             res.send(result)
         })
 
@@ -117,14 +146,13 @@ async function run() {
         })
 
 
-        // delete room
+        // delete class
         app.delete('/saveClass/:id', async (req, res) => {
             const id = req.params.id
             const query = { _id: new ObjectId(id) }
             const result = await selectClassCollection.deleteOne(query)
             res.send(result)
         })
-
 
 
 
