@@ -106,10 +106,12 @@ async function run() {
         app.put('/classes/:id', async (req, res) => {
             const id = req.params.id
             const status = req.body
+            const feedback = req.body
             const query = { _id: new ObjectId(id) }
             const options = { upsert: true }
             const updateDoc = {
                 $set: status,
+                $set: feedback,
             }
             const result = await classCollection.updateOne(query, updateDoc, options)
             res.send(result)
