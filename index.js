@@ -3,6 +3,7 @@ const app = express()
 const cors = require('cors')
 require('dotenv').config()
 const morgan = require('morgan')
+const jwt = require('jsonwebtoken')
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb')
 const port = process.env.PORT || 5000
 // const stripe = require("stripe")(process.env.PAYMENT_SECRET_KEY)
@@ -34,6 +35,37 @@ const client = new MongoClient(uri, {
     }
 });
 
+
+
+
+
+// middle were function for verify token 
+function verifyJWT(req, res, next) {
+    const authorization = req.headers.authorization
+    console.log(authorization)
+    if (!authorization) {
+        return res.status(404).send({ error: 'unauthorized access' })
+    }
+
+    // // step 1. verify if the provided token id valid or not.
+    const token = authorization.split(' ')[1]
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
+        console.log(err)
+        if (err) {
+            return res.status(403).send({ error: 'unauthorized access' })
+        }
+
+        console.log({ decoded })
+        req.decoded = decoded
+        next()
+    })
+}
+
+
+
+
+
+
 async function run() {
     try {
         const usersCollection = client.db('summerschool').collection('users')
@@ -55,6 +87,13 @@ async function run() {
         //     }
         // })
 
+
+        // sign jwt token
+        app.post('/jwt', async (req, res) => {
+            const body = req.body
+            const token = jwt.sign(body, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "1hr" })
+            res.send({ token })
+        })
 
         // save user
         app.put('/users/:email', async (req, res) => {
