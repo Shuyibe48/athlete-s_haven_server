@@ -95,26 +95,12 @@ async function run() {
             res.send({ token })
         })
 
-        // save user
-        app.put('/users/:email', async (req, res) => {
-            const email = req.params.email
-            const user = req.body
-            const query = { email: email }
-            const options = { upsert: true }
-            const updateDoc = {
-                $set: user,
-            }
-            const result = await usersCollection.updateOne(query, updateDoc, options)
-            res.send(result)
-        })
-
 
         // Get user
         app.get('/users', async (req, res) => {
             const result = await usersCollection.find().toArray()
             res.send(result)
         })
-
 
         // Get a single user
         app.get('/users/:email', async (req, res) => {
@@ -123,6 +109,110 @@ async function run() {
             const result = await usersCollection.findOne(query)
             res.send(result)
         })
+
+        // save user 
+        app.post('/users', async (req, res) => {
+            const user = req.body
+            const result = await usersCollection.insertOne(user)
+            res.send(result)
+        })
+
+        // update user role 
+        app.patch('/users/:id', async (req, res) => {
+            const id = req.params.id
+            const role = req.body
+
+            const query = { _id: new ObjectId(id) }
+
+            const options = {
+                $set: {
+                    role: role
+                }
+            }
+
+            const result = await usersCollection.updateOne(query, options)
+            res.send(result)
+        })
+
+
+
+
+
+
+
+
+
+
+
+
+        // Get class
+        app.get('/class/:email', async (req, res) => {
+            const email = req.params.email 
+            const query = {email: email}
+            const result = await classCollection.find(query).toArray()
+            res.send(result)
+        })
+
+        // Get class
+        app.get('/class/:status', async (req, res) => {
+            const status = req.params.status
+            const query = { status: status }
+            const result = await classCollection.find(query).toArray()
+            res.send(result)
+        })
+
+        // save class 
+        app.post('/class', async (req, res) => {
+            const user = req.body
+            const result = await classCollection.insertOne(user)
+            res.send(result)
+        })
+
+        // admin update class status
+        app.patch('/class/:id', async (req, res) => {
+            const id = req.params.id
+            const status = req.body
+
+            const query = { _id: new ObjectId(id) }
+
+            const options = {
+                $set: {
+                    status: status
+                }
+            }
+
+            const result = await classCollection.updateOne(query, options)
+            res.send(result)
+        })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // save user
+        // app.put('/users/:email', async (req, res) => {
+        //     const email = req.params.email
+        //     const user = req.body
+        //     const query = { email: email }
+        //     const options = { upsert: true }
+        //     const updateDoc = {
+        //         $set: user,
+        //     }
+        //     const result = await usersCollection.updateOne(query, updateDoc, options)
+        //     res.send(result)
+        // })
 
 
         // Get all class
