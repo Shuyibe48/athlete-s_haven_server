@@ -71,6 +71,7 @@ async function run() {
         const usersCollection = client.db('summerschool').collection('users')
         const classCollection = client.db('summerschool').collection('classes')
         const selectClassCollection = client.db('summerschool').collection('selectClasses')
+        const enrolledClassCollection = client.db('summerschool').collection('enrolledClass')
 
 
         // // generate client secret
@@ -118,9 +119,9 @@ async function run() {
         })
 
         // update user role 
-        app.patch('/users/:id', async (req, res) => {
-            const id = req.params.id
-            const role = req.body
+        app.patch('/users', async (req, res) => {
+            const { id } = req.body
+            const { role } = req.body
 
             const query = { _id: new ObjectId(id) }
 
@@ -144,34 +145,38 @@ async function run() {
 
 
 
+        // get class
+        app.get('/class', async (req, res) => {
+            const result = await classCollection.find().toArray()
+            res.send(result)
+        })
 
-        // Get class
+        // Get class by email
         app.get('/class/:email', async (req, res) => {
-            const email = req.params.email 
-            const query = {email: email}
+            const email = req.params.email
+            const query = { instructorEmail: email }
             const result = await classCollection.find(query).toArray()
             res.send(result)
         })
 
-        // Get class
-        app.get('/class/:status', async (req, res) => {
-            const status = req.params.status
-            const query = { status: status }
+        // Get class by status
+        app.get('/approved', async (req, res) => {
+            const query = { status: 2 }
             const result = await classCollection.find(query).toArray()
             res.send(result)
         })
 
         // save class 
         app.post('/class', async (req, res) => {
-            const user = req.body
-            const result = await classCollection.insertOne(user)
+            const classData = req.body
+            const result = await classCollection.insertOne(classData)
             res.send(result)
         })
 
         // admin update class status
         app.patch('/class/:id', async (req, res) => {
-            const id = req.params.id
-            const status = req.body
+            const { id } = req.body
+            const { status } = req.body
 
             const query = { _id: new ObjectId(id) }
 
@@ -189,13 +194,83 @@ async function run() {
 
 
 
+        // ==============================
+
+
+        // get selected class
+        app.get('/cart/:email', async (req, res) => {
+            const email = req.params.email
+            const query = { studentEmail: email }
+            const result = await selectClassCollection.find(query).toArray()
+            res.send(result)
+        })
+
+        // save class on cart
+        app.post('/cart', async (req, res) => {
+            const classData = req.body
+            const result = await selectClassCollection.insertOne(classData)
+            res.send(result)
+        })
+
+        // delete cart class
+        app.delete('/cart/:id', async (req, res) => {
+            const id = req.params.id
+            const query = { _id: new ObjectId(id) }
+            const result = await selectClassCollection.deleteOne(query)
+            res.send(result)
+        })
+
+
+        // get cart class
+        app.get('/cart-class/:id', async (req, res) => {
+            const id = req.params.id
+            const query = { _id: new ObjectId(id) }
+            const result = await classCollection.findOne(query)
+            res.send(result)
+        })
+
+
+
+        // update class sets
+        app.patch('/cart-class/:id', async (req, res) => {
+            const id = req.params.id
+            const { availableSeats } = req.body
+            const { totalEnrolled } = req.body
+
+            const query = { _id: new ObjectId(id) }
+
+            const options = {
+                $set: {
+                    availableSeats: availableSeats,
+                    totalEnrolled: totalEnrolled
+                }
+            }
+
+            const result = await classCollection.updateOne(query, options)
+            res.send(result)
+        })
 
 
 
 
+        // get enrolled class 
+        app.get('/enrolled/:email', async (req, res) => {
+            const email = req.params.email
+            const query = { email: email }
+            const result = await enrolledClassCollection.find(query).toArray()
+            res.send(result)
+        })
+
+        // enrolled class save 
+        app.post('/enrolled', async (req, res) => {
+            const enrolledClass = req.body
+            const result = await enrolledClassCollection.insertOne(enrolledClass)
+            res.send(result)
+        })
 
 
-
+        // =================================
+        // =================================
 
 
 
