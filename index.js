@@ -119,7 +119,7 @@ async function run() {
         })
 
         // update user role 
-        app.patch('/users', async (req, res) => {
+        app.patch('/users/:id', async (req, res) => {
             const { id } = req.body
             const { role } = req.body
 
@@ -271,103 +271,6 @@ async function run() {
 
         // =================================
         // =================================
-
-
-
-
-
-        // save user
-        // app.put('/users/:email', async (req, res) => {
-        //     const email = req.params.email
-        //     const user = req.body
-        //     const query = { email: email }
-        //     const options = { upsert: true }
-        //     const updateDoc = {
-        //         $set: user,
-        //     }
-        //     const result = await usersCollection.updateOne(query, updateDoc, options)
-        //     res.send(result)
-        // })
-
-
-        // Get all class
-        app.get('/classes', async (req, res) => {
-            const result = await classCollection.find().toArray()
-            res.send(result)
-        })
-
-        // Save a class in database
-        app.post('/classes', async (req, res) => {
-            const classes = req.body
-            console.log(classes)
-            const result = await classCollection.insertOne(classes)
-            console.log(result)
-            res.send(result)
-        })
-
-
-        // update class
-        app.put('/classes/:id', async (req, res) => {
-            const id = req.params.id
-            const status = req.body
-            const feedback = req.body
-            const className = req.body
-            const availableSeats = req.body
-            const price = req.body
-            const image = req.body
-            const query = { _id: new ObjectId(id) }
-            const options = { upsert: true }
-            const updateDoc = {
-                $set: status,
-                $set: feedback,
-                $set: className,
-                $set: availableSeats,
-                $set: price,
-                $set: image,
-            }
-            const result = await classCollection.updateOne(query, updateDoc, options)
-            res.send(result)
-        })
-
-
-        // Get user classes
-        app.get('/classes/:email', async (req, res) => {
-            const email = req.params.email
-            const query = { email: email }
-            const result = await classCollection.find(query).toArray()
-            // console.log(result)
-            res.send(result)
-        })
-
-
-
-        // Get all select class
-        app.get('/saveClass/:email', async (req, res) => {
-            const email = req.params.email
-            const query = { selectStudent: email }
-            const result = await selectClassCollection.find(query).toArray()
-            res.send(result)
-        })
-
-
-        // Save select class
-        app.post('/saveClass', async (req, res) => {
-            const selectClasses = req.body
-            console.log(selectClasses)
-            const result = await selectClassCollection.insertOne(selectClasses)
-            console.log(result)
-            res.send(result)
-        })
-
-
-        // delete class
-        app.delete('/saveClass/:id', async (req, res) => {
-            const id = req.params.id
-            const query = { _id: new ObjectId(id) }
-            const result = await selectClassCollection.deleteOne(query)
-            res.send(result)
-        })
-
 
 
         // Send a ping to confirm a successful connection
