@@ -103,6 +103,14 @@ async function run() {
             res.send(result)
         })
 
+
+        // Get instructor
+        app.get('/instructor', async (req, res) => {
+            const instructor = { role: 2 }
+            const result = await usersCollection.find(instructor).toArray()
+            res.send(result)
+        })
+
         // Get a single user
         app.get('/users/:email', async (req, res) => {
             const email = req.params.email
@@ -148,6 +156,12 @@ async function run() {
         // get class
         app.get('/class', async (req, res) => {
             const result = await classCollection.find().toArray()
+            res.send(result)
+        })
+
+        // get popular classes
+        app.get('/popular-classes', async (req, res) => {
+            const result = await classCollection.find().limit(6).toArray()
             res.send(result)
         })
 
