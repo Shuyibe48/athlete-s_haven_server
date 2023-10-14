@@ -3,6 +3,8 @@ const app = express()
 const cors = require('cors')
 require('dotenv').config()
 const morgan = require('morgan')
+const nodemailer = require('nodemailer');
+const mg = require('nodemailer-mailgun-transport');
 const jwt = require('jsonwebtoken')
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb')
 const port = process.env.PORT || 5000
@@ -20,8 +22,15 @@ app.use(express.json())
 app.use(morgan('dev'))
 
 
+// This is your API key that you retrieve from www.mailgun.com/cp (free up to 10K monthly emails)
+const auth = {
+    auth: {
+        api_key: process.env.EMAIL_PRIVATE_KEY,
+        domain: process.env.EMAIL_DOMAIN
+    }
+}
 
-
+const transporter = nodemailer.createTransport(mg(auth));
 
 
 const uri = `mongodb+srv://${process.env.USER_NAME}:${process.env.USER_PASS}@cluster0.jukjd3u.mongodb.net/?retryWrites=true&w=majority`
